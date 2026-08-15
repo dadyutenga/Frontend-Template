@@ -542,7 +542,7 @@ function FeatureIllustration({ id, color, bg }: { id: string; color: string; bg:
           ))}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 3, marginBottom: 10 }}>
-          {['6am','9','12','3pm','6','9'].map(l => <span key={l} style={{ fontFamily: 'var(--mono)', fontSize: 7.5, color: 'var(--fg-4)' }}>{l}</span>)}
+          {['6am','9am','12','3pm','6','9pm'].map((l,i) => <span key={i} style={{ fontFamily: 'var(--mono)', fontSize: 7.5, color: 'var(--fg-4)' }}>{l}</span>)}
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
           {[['LEO','4.21M'],['FAIDA','1.12M']].map(([lbl,val]) => (
