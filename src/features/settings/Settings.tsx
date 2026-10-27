@@ -6,5 +6,134 @@ import { useLanguage, useTheme } from '@/app/providers';
 import { useLocalStorage } from '@/hooks';
 import { Button, Select, Switch, Tabs, useToast } from '@/components/ui';
 import { FormInput } from '@/components/shared/forms';
-const schema=z.object({name:z.string().trim().min(2,'Enter at least 2 characters'),email:z.email('Enter a valid email')});
-export default function Settings(){const {theme,setTheme}=useTheme();const {language,setLanguage,t}=useLanguage();const toast=useToast();const [saved,setSaved]=useLocalStorage('template-account',{name:'Alex Morgan',email:'alex@example.com'});const [notifications,setNotifications]=useLocalStorage('template-notifications',{email:true,desktop:false,digest:true});const [saving,setSaving]=useState(false);const {register,handleSubmit,formState:{errors}}=useForm<z.infer<typeof schema>>({resolver:zodResolver(schema),defaultValues:saved});return <div className="page max-w-4xl"><div><h1>Settings</h1><p className="muted">Make this workspace feel like yours. Preferences stay in this browser.</p></div><section className="card"><Tabs items={[{value:'account',label:'Account',content:<form className="max-w-lg space-y-5" noValidate onSubmit={handleSubmit(values=>{setSaving(true);setSaved(values);toast('Demo preferences saved locally');setSaving(false)})}><h2>Account details</h2><FormInput label="Display name" {...register('name')} error={errors.name?.message}/><FormInput label="Email" type="email" {...register('email')} error={errors.email?.message}/><Button type="submit" variant="primary" disabled={saving}>Save preferences</Button></form>},{value:'appearance',label:'Appearance',content:<div className="max-w-lg space-y-6"><div><h2>Theme</h2><p className="muted mb-4">Use a light, dark, or system appearance.</p><label className="field">Color theme<Select value={theme} onChange={e=>setTheme(e.target.value as typeof theme)}><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></Select></label></div><label className="field">{t('language')}<Select value={language} onChange={e=>setLanguage(e.target.value as typeof language)}><option value="en">English</option><option value="sw">Kiswahili</option></Select></label></div>},{value:'notifications',label:'Notifications',content:<div className="max-w-lg space-y-6"><h2>Notification preferences</h2>{(Object.keys(notifications) as (keyof typeof notifications)[]).map(key=><Switch key={key} label={{email:'Email updates',desktop:'In-app notifications',digest:'Weekly digest'}[key]} checked={notifications[key]} onChange={checked=>setNotifications({...notifications,[key]:checked})}/>)}<p className="muted text-xs">UI preferences only; no emails or browser notifications are sent.</p></div>}]} /></section></div>}
+const schema = z.object({
+  name: z.string().trim().min(2, 'Enter at least 2 characters'),
+  email: z.email('Enter a valid email'),
+});
+export default function Settings() {
+  const { theme, setTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
+  const toast = useToast();
+  const [saved, setSaved] = useLocalStorage('template-account', {
+    name: 'Alex Morgan',
+    email: 'alex@example.com',
+  });
+  const [notifications, setNotifications] = useLocalStorage('template-notifications', {
+    email: true,
+    desktop: false,
+    digest: true,
+  });
+  const [saving, setSaving] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof schema>>({ resolver: zodResolver(schema), defaultValues: saved });
+  return (
+    <div className="page max-w-4xl">
+      <div>
+        <h1>Settings</h1>
+        <p className="muted">
+          Make this workspace feel like yours. Preferences stay in this browser.
+        </p>
+      </div>
+      <section className="card">
+        <Tabs
+          items={[
+            {
+              value: 'account',
+              label: 'Account',
+              content: (
+                <form
+                  className="max-w-lg space-y-5"
+                  noValidate
+                  onSubmit={handleSubmit((values) => {
+                    setSaving(true);
+                    setSaved(values);
+                    toast('Demo preferences saved locally');
+                    setSaving(false);
+                  })}
+                >
+                  <h2>Account details</h2>
+                  <FormInput
+                    label="Display name"
+                    {...register('name')}
+                    error={errors.name?.message}
+                  />
+                  <FormInput
+                    label="Email"
+                    type="email"
+                    {...register('email')}
+                    error={errors.email?.message}
+                  />
+                  <Button type="submit" variant="primary" disabled={saving}>
+                    Save preferences
+                  </Button>
+                </form>
+              ),
+            },
+            {
+              value: 'appearance',
+              label: 'Appearance',
+              content: (
+                <div className="max-w-lg space-y-6">
+                  <div>
+                    <h2>Theme</h2>
+                    <p className="muted mb-4">Use a light, dark, or system appearance.</p>
+                    <label className="field">
+                      Color theme
+                      <Select
+                        value={theme}
+                        onChange={(e) => setTheme(e.target.value as typeof theme)}
+                      >
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="system">System</option>
+                      </Select>
+                    </label>
+                  </div>
+                  <label className="field">
+                    {t('language')}
+                    <Select
+                      value={language}
+                      onChange={(e) => setLanguage(e.target.value as typeof language)}
+                    >
+                      <option value="en">English</option>
+                      <option value="sw">Kiswahili</option>
+                    </Select>
+                  </label>
+                </div>
+              ),
+            },
+            {
+              value: 'notifications',
+              label: 'Notifications',
+              content: (
+                <div className="max-w-lg space-y-6">
+                  <h2>Notification preferences</h2>
+                  {(Object.keys(notifications) as (keyof typeof notifications)[]).map((key) => (
+                    <Switch
+                      key={key}
+                      label={
+                        {
+                          email: 'Email updates',
+                          desktop: 'In-app notifications',
+                          digest: 'Weekly digest',
+                        }[key]
+                      }
+                      checked={notifications[key]}
+                      onChange={(checked) => setNotifications({ ...notifications, [key]: checked })}
+                    />
+                  ))}
+                  <p className="muted text-xs">
+                    UI preferences only; no emails or browser notifications are sent.
+                  </p>
+                </div>
+              ),
+            },
+          ]}
+        />
+      </section>
+    </div>
+  );
+}

@@ -8,5 +8,137 @@ import { useAuth } from '@/features/auth/AuthProvider';
 import { useRecords, useSaveRecord, useDeleteRecords } from './data';
 import { RecordForm, type RecordValues } from './RecordForm';
 import type { ExampleRecord } from '@/types';
-const columns:Column<ExampleRecord>[]=[{id:'name',header:'Name',value:r=>r.name,render:r=><Link className="font-semibold text-accent" to={`/records/${r.id}`}>{r.name}</Link>},{id:'email',header:'Contact',value:r=>r.email},{id:'category',header:'Team',value:r=>r.category},{id:'status',header:'Status',value:r=>r.status,render:r=><Badge tone={r.status==='Active'?'success':'neutral'}>{r.status}</Badge>},{id:'updatedAt',header:'Updated',value:r=>r.updatedAt}];
-export default function ListPage(){const query=useRecords();const save=useSaveRecord();const remove=useDeleteRecords();const {user}=useAuth();const [editor,setEditor]=useState<{record?:ExampleRecord;drawer:boolean}|null>(null);const [deleting,setDeleting]=useState<string[]>([]);const toast=useToast();const submit=async(values:RecordValues)=>{try{await save.mutateAsync({...values,id:editor?.record?.id??crypto.randomUUID(),updatedAt:new Date().toISOString().slice(0,10)});setEditor(null);toast('Mock record saved')}catch(error){toast(error instanceof Error?error.message:'Unable to save')}};const Editor=editor?.drawer?Drawer:Modal;return <div className="page"><div className="flex flex-wrap justify-between gap-4"><div><h1>Records</h1><p className="muted">A reusable list with search, filters, selection, and export.</p></div><div className="flex gap-2"><Link to="/records/new" className="btn">Full-page form</Link><Button variant="primary" onClick={()=>user?setEditor({drawer:false}):toast('Sign in to a demo session to edit records')}><Plus size={16}/>Create record</Button></div></div><Alert>Clearly labeled mock data. {user?'Edits last until the page reloads.':<><Link to="/auth/login?next=%2Frecords" className="underline">Start a demo session</Link> to create, edit, or delete.</>}</Alert><section className="card">{query.isPending?<PageLoader/>:query.isError?<Alert tone="error">{query.error.message}<Button onClick={()=>query.refetch()}>Retry</Button></Alert>:<DataTable data={query.data} columns={columns} getRowId={r=>r.id} filterColumn="status" onBulkDelete={user?setDeleting:undefined} rowActions={r=><div className="flex gap-2"><Button disabled={!user} onClick={()=>setEditor({record:r,drawer:false})}>Edit</Button><Button disabled={!user} onClick={()=>setEditor({record:r,drawer:true})}>Drawer</Button></div>}/>}</section><Editor open={!!editor} onClose={()=>setEditor(null)} title={editor?.record?'Edit record':'Create record'}><RecordForm key={editor?.record?.id??'new'} record={editor?.record} onSave={submit} pending={save.isPending}/></Editor><ConfirmDialog open={deleting.length>0} onClose={()=>setDeleting([])} title={`Delete ${deleting.length} mock records?`} onConfirm={()=>{remove.mutate(deleting,{onSuccess:()=>toast('Mock records deleted'),onError:error=>toast(error.message)})}}/></div>}
+const columns: Column<ExampleRecord>[] = [
+  {
+    id: 'name',
+    header: 'Name',
+    value: (r) => r.name,
+    render: (r) => (
+      <Link className="font-semibold text-accent" to={`/records/${r.id}`}>
+        {r.name}
+      </Link>
+    ),
+  },
+  { id: 'email', header: 'Contact', value: (r) => r.email },
+  { id: 'category', header: 'Team', value: (r) => r.category },
+  {
+    id: 'status',
+    header: 'Status',
+    value: (r) => r.status,
+    render: (r) => <Badge tone={r.status === 'Active' ? 'success' : 'neutral'}>{r.status}</Badge>,
+  },
+  { id: 'updatedAt', header: 'Updated', value: (r) => r.updatedAt },
+];
+export default function ListPage() {
+  const query = useRecords();
+  const save = useSaveRecord();
+  const remove = useDeleteRecords();
+  const { user } = useAuth();
+  const [editor, setEditor] = useState<{ record?: ExampleRecord; drawer: boolean } | null>(null);
+  const [deleting, setDeleting] = useState<string[]>([]);
+  const toast = useToast();
+  const submit = async (values: RecordValues) => {
+    try {
+      await save.mutateAsync({
+        ...values,
+        id: editor?.record?.id ?? crypto.randomUUID(),
+        updatedAt: new Date().toISOString().slice(0, 10),
+      });
+      setEditor(null);
+      toast('Mock record saved');
+    } catch (error) {
+      toast(error instanceof Error ? error.message : 'Unable to save');
+    }
+  };
+  const Editor = editor?.drawer ? Drawer : Modal;
+  return (
+    <div className="page">
+      <div className="flex flex-wrap justify-between gap-4">
+        <div>
+          <h1>Records</h1>
+          <p className="muted">A reusable list with search, filters, selection, and export.</p>
+        </div>
+        <div className="flex gap-2">
+          <Link to="/records/new" className="btn">
+            Full-page form
+          </Link>
+          <Button
+            variant="primary"
+            onClick={() =>
+              user
+                ? setEditor({ drawer: false })
+                : toast('Sign in to a demo session to edit records')
+            }
+          >
+            <Plus size={16} />
+            Create record
+          </Button>
+        </div>
+      </div>
+      <Alert>
+        Clearly labeled mock data.{' '}
+        {user ? (
+          'Edits last until the page reloads.'
+        ) : (
+          <>
+            <Link to="/auth/login?next=%2Frecords" className="underline">
+              Start a demo session
+            </Link>{' '}
+            to create, edit, or delete.
+          </>
+        )}
+      </Alert>
+      <section className="card">
+        {query.isPending ? (
+          <PageLoader />
+        ) : query.isError ? (
+          <Alert tone="error">
+            {query.error.message}
+            <Button onClick={() => query.refetch()}>Retry</Button>
+          </Alert>
+        ) : (
+          <DataTable
+            data={query.data}
+            columns={columns}
+            getRowId={(r) => r.id}
+            filterColumn="status"
+            onBulkDelete={user ? setDeleting : undefined}
+            rowActions={(r) => (
+              <div className="flex gap-2">
+                <Button disabled={!user} onClick={() => setEditor({ record: r, drawer: false })}>
+                  Edit
+                </Button>
+                <Button disabled={!user} onClick={() => setEditor({ record: r, drawer: true })}>
+                  Drawer
+                </Button>
+              </div>
+            )}
+          />
+        )}
+      </section>
+      <Editor
+        open={!!editor}
+        onClose={() => setEditor(null)}
+        title={editor?.record ? 'Edit record' : 'Create record'}
+      >
+        <RecordForm
+          key={editor?.record?.id ?? 'new'}
+          record={editor?.record}
+          onSave={submit}
+          pending={save.isPending}
+        />
+      </Editor>
+      <ConfirmDialog
+        open={deleting.length > 0}
+        onClose={() => setDeleting([])}
+        title={`Delete ${deleting.length} mock records?`}
+        onConfirm={() => {
+          remove.mutate(deleting, {
+            onSuccess: () => toast('Mock records deleted'),
+            onError: (error) => toast(error.message),
+          });
+        }}
+      />
+    </div>
+  );
+}

@@ -3,10 +3,155 @@ import { Link } from 'react-router-dom';
 import { ArrowDownRight, ArrowUpRight, Copy } from 'lucide-react';
 import { Button, useToast } from '@/components/ui';
 import { cn } from '@/lib/utils';
-export function KpiTrend({value}:{value:number}){return <span className={cn('inline-flex items-center gap-1 text-xs font-semibold',value>=0?'text-success':'text-danger')}>{value>=0?<ArrowUpRight size={14}/>:<ArrowDownRight size={14}/>} {Math.abs(value)}% <span className="font-normal text-muted">vs. previous period</span></span>}
-export function StatCard({title,value,trend,icon}:{title:string;value:string;trend:number;icon:ReactNode}){return <section className="card"><div className="mb-4 flex justify-between text-muted"><h2 className="text-sm font-medium">{title}</h2>{icon}</div><p className="mb-2 text-3xl font-bold tracking-tight">{value}</p><KpiTrend value={trend}/></section>}
-export function Breadcrumb({items}:{items:{label:string;href?:string}[]}){return <nav aria-label="Breadcrumb"><ol className="flex flex-wrap gap-2 text-sm text-muted">{items.map((item,i)=><li key={i} className="flex items-center gap-2">{i>0&&<span aria-hidden="true">/</span>}{item.href?<Link to={item.href} className="hover:text-accent">{item.label}</Link>:<span aria-current={i===items.length-1?'page':undefined} className="text-foreground">{item.label}</span>}</li>)}</ol></nav>}
-export function ActivityFeed({items}:{items:{id:string;title:string;description:string;time:string}[]}){return <ol className="space-y-6">{items.map(item=><li key={item.id} className="flex gap-3"><span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent"/><div><h3 className="text-sm">{item.title}</h3><p className="muted text-xs">{item.description}</p><time className="muted text-xs">{item.time}</time></div></li>)}</ol>}
-export function CopyButton({value}:{value:string}){const toast=useToast();return <Button onClick={async()=>{try{await navigator.clipboard.writeText(value);toast('Copied to clipboard')}catch{toast('Clipboard unavailable. Please copy the text manually.')}}}><Copy size={14}/>Copy</Button>}
-export function PrintableDocument({title,reference,sections}:{title:string;reference:string;sections:{label:string;value:string}[]}){return <article className="card"><div className="mb-6 flex flex-wrap justify-between gap-4"><div><h2>{title}</h2><p className="muted">{reference}</p></div><Button onClick={()=>window.print()}>Print document</Button></div><dl className="divide-y divide-line">{sections.map(s=><div key={s.label} className="flex justify-between gap-4 py-3"><dt className="muted">{s.label}</dt><dd>{s.value}</dd></div>)}</dl><p className="muted mt-6 text-xs">Demonstration document · No financial or legal effect</p></article>}
-export function SummaryPanel({title,rows,footer}:{title:string;rows:{label:string;value:string}[];footer?:ReactNode}){return <section className="card"><h2 className="mb-4">{title}</h2><dl>{rows.map(row=><div key={row.label} className="flex justify-between border-b border-line py-3"><dt className="muted">{row.label}</dt><dd>{row.value}</dd></div>)}</dl>{footer}</section>}
+export function KpiTrend({ value }: { value: number }) {
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 text-xs font-semibold',
+        value >= 0 ? 'text-success' : 'text-danger',
+      )}
+    >
+      {value >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />} {Math.abs(value)}%{' '}
+      <span className="font-normal text-muted">vs. previous period</span>
+    </span>
+  );
+}
+export function StatCard({
+  title,
+  value,
+  trend,
+  icon,
+}: {
+  title: string;
+  value: string;
+  trend: number;
+  icon: ReactNode;
+}) {
+  return (
+    <section className="card">
+      <div className="mb-4 flex justify-between text-muted">
+        <h2 className="text-sm font-medium">{title}</h2>
+        {icon}
+      </div>
+      <p className="mb-2 text-3xl font-bold tracking-tight">{value}</p>
+      <KpiTrend value={trend} />
+    </section>
+  );
+}
+export function Breadcrumb({ items }: { items: { label: string; href?: string }[] }) {
+  return (
+    <nav aria-label="Breadcrumb">
+      <ol className="flex flex-wrap gap-2 text-sm text-muted">
+        {items.map((item, i) => (
+          <li key={i} className="flex items-center gap-2">
+            {i > 0 && <span aria-hidden="true">/</span>}
+            {item.href ? (
+              <Link to={item.href} className="hover:text-accent">
+                {item.label}
+              </Link>
+            ) : (
+              <span
+                aria-current={i === items.length - 1 ? 'page' : undefined}
+                className="text-foreground"
+              >
+                {item.label}
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}
+export function ActivityFeed({
+  items,
+}: {
+  items: { id: string; title: string; description: string; time: string }[];
+}) {
+  return (
+    <ol className="space-y-6">
+      {items.map((item) => (
+        <li key={item.id} className="flex gap-3">
+          <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" />
+          <div>
+            <h3 className="text-sm">{item.title}</h3>
+            <p className="muted text-xs">{item.description}</p>
+            <time className="muted text-xs">{item.time}</time>
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
+export function CopyButton({ value }: { value: string }) {
+  const toast = useToast();
+  return (
+    <Button
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(value);
+          toast('Copied to clipboard');
+        } catch {
+          toast('Clipboard unavailable. Please copy the text manually.');
+        }
+      }}
+    >
+      <Copy size={14} />
+      Copy
+    </Button>
+  );
+}
+export function PrintableDocument({
+  title,
+  reference,
+  sections,
+}: {
+  title: string;
+  reference: string;
+  sections: { label: string; value: string }[];
+}) {
+  return (
+    <article className="card">
+      <div className="mb-6 flex flex-wrap justify-between gap-4">
+        <div>
+          <h2>{title}</h2>
+          <p className="muted">{reference}</p>
+        </div>
+        <Button onClick={() => window.print()}>Print document</Button>
+      </div>
+      <dl className="divide-y divide-line">
+        {sections.map((s) => (
+          <div key={s.label} className="flex justify-between gap-4 py-3">
+            <dt className="muted">{s.label}</dt>
+            <dd>{s.value}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="muted mt-6 text-xs">Demonstration document · No financial or legal effect</p>
+    </article>
+  );
+}
+export function SummaryPanel({
+  title,
+  rows,
+  footer,
+}: {
+  title: string;
+  rows: { label: string; value: string }[];
+  footer?: ReactNode;
+}) {
+  return (
+    <section className="card">
+      <h2 className="mb-4">{title}</h2>
+      <dl>
+        {rows.map((row) => (
+          <div key={row.label} className="flex justify-between border-b border-line py-3">
+            <dt className="muted">{row.label}</dt>
+            <dd>{row.value}</dd>
+          </div>
+        ))}
+      </dl>
+      {footer}
+    </section>
+  );
+}

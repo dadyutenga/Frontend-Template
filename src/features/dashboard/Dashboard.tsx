@@ -8,5 +8,160 @@ import { DataTable, type Column } from '@/components/shared/DataTable';
 import { initialRecords } from '@/features/example-crud/data';
 import type { ExampleRecord } from '@/types';
 import { exportCsv } from '@/lib/utils';
-const columns:Column<ExampleRecord>[]=[{id:'name',header:'Name',value:r=>r.name,render:r=><Link to={`/records/${r.id}`} className="font-semibold hover:text-accent">{r.name}</Link>},{id:'category',header:'Team',value:r=>r.category},{id:'status',header:'Status',value:r=>r.status,render:r=><Badge tone={r.status==='Active'?'success':'neutral'}>{r.status}</Badge>},{id:'updatedAt',header:'Updated',value:r=>r.updatedAt}];
-export default function Dashboard(){const {t}=useLanguage();const toast=useToast();return <div className="page"><div className="flex flex-wrap items-start justify-between gap-4"><div><div className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted">Workspace overview</div><h1>{t('welcome')}, Alex <span className="text-xl">✦</span></h1><p className="muted mt-1">{t('overview')}</p></div><div className="flex gap-2"><Button onClick={()=>{exportCsv(initialRecords,columns.map(c=>({header:c.header,value:c.value})),'workspace.csv');toast('Workspace summary exported')}}><Download size={15}/>Export summary</Button><Link to="/records/new" className="btn btn-primary"><Plus size={16}/>Create record</Link></div></div><div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-surface px-4 py-3 text-xs"><span className="muted"><span className="mr-2 text-accent">✧</span> Your next project starts here. Every number below is clearly labeled mock data.</span><Badge>DEMO DATA</Badge></div><div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4"><StatCard title="Total records" value="2,845" trend={12.8} icon={<Layers size={18}/>}/><StatCard title="Active members" value="1,420" trend={8.2} icon={<Users size={18}/>}/><StatCard title="Completion rate" value="94.2%" trend={4.6} icon={<Activity size={18}/>}/><StatCard title="Average response" value="2.4 hrs" trend={-3.1} icon={<Clock3 size={18}/>}/></div><div className="grid gap-5 xl:grid-cols-[1.8fr_1fr]"><ChartCard title="Workspace activity" description="Mock activity over the last seven days" action={<Badge>This week</Badge>}><div className="mb-3 flex items-baseline gap-3"><span className="text-3xl font-bold">2,230</span><span className="text-xs text-success">↗ 18.6% this week</span></div><AreaChart data={demoChart} label="Mock weekly activity: 180, 260, 220, 380, 310, 460, 420"/></ChartCard><ChartCard title="Record distribution" description="Mock records by team"><PieChart data={[{name:'Design',value:45},{name:'Engineering',value:35},{name:'Operations',value:20}]}/></ChartCard></div><div className="grid gap-5 xl:grid-cols-[1.8fr_1fr]"><section className="card min-w-0"><div className="mb-5 flex items-center justify-between"><div><h2>Recent records</h2><p className="muted text-xs">A look at what’s moving forward.</p></div><Link to="/records" className="flex items-center gap-1 text-xs text-accent">View all<ArrowUpRight size={14}/></Link></div><DataTable data={initialRecords.slice(0,5)} columns={columns} getRowId={r=>r.id} label="Recent records"/></section><section className="card"><h2 className="mb-1">Activity feed</h2><p className="muted mb-6 text-xs">A little progress, every day. Mock events.</p><ActivityFeed items={[{id:'1',title:'Design system updated',description:'Alex added new component patterns.',time:'10 minutes ago'},{id:'2',title:'New workspace member',description:'Jamie joined the Engineering team.',time:'45 minutes ago'},{id:'3',title:'Weekly report generated',description:'Your workspace summary is ready.',time:'2 hours ago'},{id:'4',title:'Research library published',description:'A new milestone for the team.',time:'Yesterday'}]}/><Link to="/example" className="btn mt-6 w-full">Explore quick actions<ArrowUpRight size={14}/></Link></section></div></div>}
+const columns: Column<ExampleRecord>[] = [
+  {
+    id: 'name',
+    header: 'Name',
+    value: (r) => r.name,
+    render: (r) => (
+      <Link to={`/records/${r.id}`} className="font-semibold hover:text-accent">
+        {r.name}
+      </Link>
+    ),
+  },
+  { id: 'category', header: 'Team', value: (r) => r.category },
+  {
+    id: 'status',
+    header: 'Status',
+    value: (r) => r.status,
+    render: (r) => <Badge tone={r.status === 'Active' ? 'success' : 'neutral'}>{r.status}</Badge>,
+  },
+  { id: 'updatedAt', header: 'Updated', value: (r) => r.updatedAt },
+];
+export default function Dashboard() {
+  const { t } = useLanguage();
+  const toast = useToast();
+  return (
+    <div className="page">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted">
+            Workspace overview
+          </div>
+          <h1>
+            {t('welcome')}, Alex <span className="text-xl">✦</span>
+          </h1>
+          <p className="muted mt-1">{t('overview')}</p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => {
+              exportCsv(
+                initialRecords,
+                columns.map((c) => ({ header: c.header, value: c.value })),
+                'workspace.csv',
+              );
+              toast('Workspace summary exported');
+            }}
+          >
+            <Download size={15} />
+            Export summary
+          </Button>
+          <Link to="/records/new" className="btn btn-primary">
+            <Plus size={16} />
+            Create record
+          </Link>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-surface px-4 py-3 text-xs">
+        <span className="muted">
+          <span className="mr-2 text-accent">✧</span> Your next project starts here. Every number
+          below is clearly labeled mock data.
+        </span>
+        <Badge>DEMO DATA</Badge>
+      </div>
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard title="Total records" value="2,845" trend={12.8} icon={<Layers size={18} />} />
+        <StatCard title="Active members" value="1,420" trend={8.2} icon={<Users size={18} />} />
+        <StatCard title="Completion rate" value="94.2%" trend={4.6} icon={<Activity size={18} />} />
+        <StatCard
+          title="Average response"
+          value="2.4 hrs"
+          trend={-3.1}
+          icon={<Clock3 size={18} />}
+        />
+      </div>
+      <div className="grid gap-5 xl:grid-cols-[1.8fr_1fr]">
+        <ChartCard
+          title="Workspace activity"
+          description="Mock activity over the last seven days"
+          action={<Badge>This week</Badge>}
+        >
+          <div className="mb-3 flex items-baseline gap-3">
+            <span className="text-3xl font-bold">2,230</span>
+            <span className="text-xs text-success">↗ 18.6% this week</span>
+          </div>
+          <AreaChart
+            data={demoChart}
+            label="Mock weekly activity: 180, 260, 220, 380, 310, 460, 420"
+          />
+        </ChartCard>
+        <ChartCard title="Record distribution" description="Mock records by team">
+          <PieChart
+            data={[
+              { name: 'Design', value: 45 },
+              { name: 'Engineering', value: 35 },
+              { name: 'Operations', value: 20 },
+            ]}
+          />
+        </ChartCard>
+      </div>
+      <div className="grid gap-5 xl:grid-cols-[1.8fr_1fr]">
+        <section className="card min-w-0">
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <h2>Recent records</h2>
+              <p className="muted text-xs">A look at what’s moving forward.</p>
+            </div>
+            <Link to="/records" className="flex items-center gap-1 text-xs text-accent">
+              View all
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
+          <DataTable
+            data={initialRecords.slice(0, 5)}
+            columns={columns}
+            getRowId={(r) => r.id}
+            label="Recent records"
+          />
+        </section>
+        <section className="card">
+          <h2 className="mb-1">Activity feed</h2>
+          <p className="muted mb-6 text-xs">A little progress, every day. Mock events.</p>
+          <ActivityFeed
+            items={[
+              {
+                id: '1',
+                title: 'Design system updated',
+                description: 'Alex added new component patterns.',
+                time: '10 minutes ago',
+              },
+              {
+                id: '2',
+                title: 'New workspace member',
+                description: 'Jamie joined the Engineering team.',
+                time: '45 minutes ago',
+              },
+              {
+                id: '3',
+                title: 'Weekly report generated',
+                description: 'Your workspace summary is ready.',
+                time: '2 hours ago',
+              },
+              {
+                id: '4',
+                title: 'Research library published',
+                description: 'A new milestone for the team.',
+                time: 'Yesterday',
+              },
+            ]}
+          />
+          <Link to="/example" className="btn mt-6 w-full">
+            Explore quick actions
+            <ArrowUpRight size={14} />
+          </Link>
+        </section>
+      </div>
+    </div>
+  );
+}
