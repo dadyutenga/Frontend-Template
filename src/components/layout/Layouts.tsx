@@ -132,7 +132,7 @@ export function DashboardLayout() {
           <span>© {new Date().getFullYear()} Your App · Built to be yours.</span>
           <span>
             React + Vite + TypeScript{' '}
-            <Link to="/example" className="ml-4 text-accent">
+            <Link to="/example" className="ml-4 text-accent underline underline-offset-4">
               Getting started
             </Link>
           </span>
@@ -147,7 +147,7 @@ export function AuthLayout() {
       <aside className="hidden flex-col justify-between bg-accent p-14 text-surface lg:flex">
         <Brand />
         <div>
-          <span className="text-xs font-semibold uppercase tracking-widest opacity-70">
+          <span className="text-xs font-semibold uppercase tracking-widest opacity-100">
             A place for your next idea
           </span>
           <h2 className="mt-6 max-w-lg text-5xl leading-tight">
@@ -155,11 +155,11 @@ export function AuthLayout() {
             <br />
             Endless possibilities.
           </h2>
-          <p className="mt-6 max-w-md opacity-80">
+          <p className="mt-6 max-w-md opacity-100">
             Thoughtful components, flexible layouts, and the tools to build something that’s yours.
           </p>
         </div>
-        <p className="text-xs opacity-70">
+        <p className="text-xs opacity-100">
           UI demonstration only. No authentication service is connected.
         </p>
       </aside>

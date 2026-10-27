@@ -318,7 +318,7 @@ export function Popover({ trigger, children }: { trigger: ReactNode; children: R
     <RP.Root>
       <RP.Trigger asChild>{trigger}</RP.Trigger>
       <RP.Portal>
-        <RP.Content className="menu max-w-80 p-4" sideOffset={8}>
+        <RP.Content aria-label="Additional options" className="menu max-w-80 p-4" sideOffset={8}>
           {children}
         </RP.Content>
       </RP.Portal>

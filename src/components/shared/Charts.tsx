@@ -57,7 +57,11 @@ function CartesianChart({
 }) {
   const Chart = type === 'line' ? RL : type === 'bar' ? RB : RA;
   return (
-    <div role="img" aria-label={label} className="h-64 w-full min-w-0">
+    <div
+      role="img"
+      aria-label={`${label}: ${data.map((point) => `${point.name}: ${point.value}`).join(', ')}`}
+      className="h-64 w-full min-w-0"
+    >
       <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <Chart data={data} margin={{ left: -20, right: 12, top: 12, bottom: 0 }}>
           <CartesianGrid stroke="var(--line)" vertical={false} />
@@ -72,7 +76,7 @@ function CartesianChart({
             contentStyle={{
               background: 'var(--surface)',
               border: '1px solid var(--line)',
-              borderRadius: 8,
+              borderRadius: 'var(--radius)',
             }}
           />
           {type === 'line' ? (
@@ -123,7 +127,11 @@ export function PieChart({
   label?: string;
 }) {
   return (
-    <div role="img" aria-label={label} className="h-64">
+    <div
+      role="img"
+      aria-label={`${label}: ${data.map((point) => `${point.name}: ${point.value}`).join(', ')}`}
+      className="h-64"
+    >
       <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <RP>
           <Pie
