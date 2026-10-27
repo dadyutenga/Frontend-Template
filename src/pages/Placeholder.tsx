@@ -1,0 +1,1 @@
+export default function Placeholder(){return <section className="card"><h1>Your App</h1><p>Template conversion in progress.</p></section>}
