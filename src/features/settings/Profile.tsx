@@ -1,0 +1,5 @@
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/features/auth/AuthProvider';
+import { Avatar, Badge, Tabs } from '@/components/ui';
+import { ActivityFeed, CopyButton } from '@/components/shared/patterns';
+export default function Profile(){const {user}=useAuth();return <div className="page max-w-4xl"><section className="card"><div className="flex flex-wrap items-center gap-5"><Avatar name={user?.name??'Demo member'}/><div><h1>{user?.name}</h1><p className="muted">{user?.email}</p></div><Badge>Demo member</Badge><Link className="btn ml-auto" to="/settings">Edit preferences</Link></div></section><section className="card"><Tabs items={[{value:'about',label:'About',content:<div className="space-y-4"><h2>A profile ready for your project</h2><p className="muted">This identity exists only in memory for the current demo session.</p><CopyButton value={user?.email??''}/></div>},{value:'activity',label:'Activity',content:<ActivityFeed items={[{id:'1',title:'Demo session started',description:'No real credentials were used.',time:'This session'}]}/>}]} /></section></div>}
