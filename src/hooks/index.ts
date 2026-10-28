@@ -1,0 +1,72 @@
+import { useCallback, useEffect, useState, type RefObject } from 'react';
+export function useLocalStorage<T>(key: string, initial: T) {
+  const [value, setValue] = useState<T>(() => {
+    try {
+      const saved = localStorage.getItem(key);
+      return saved ? (JSON.parse(saved) as T) : initial;
+    } catch {
+      return initial;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      /* Storage may be unavailable; state remains usable in memory. */
+    }
+  }, [key, value]);
+  return [value, setValue] as const;
+}
+export function useDebounce<T>(value: T, delay = 250) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debounced;
+}
+export function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const listener = () => setMatches(media.matches);
+    listener();
+    media.addEventListener('change', listener);
+    return () => media.removeEventListener('change', listener);
+  }, [query]);
+  return matches;
+}
+export function useClickOutside<T extends HTMLElement>(
+  ref: RefObject<T | null>,
+  onOutside: () => void,
+) {
+  useEffect(() => {
+    const listener = (event: PointerEvent) => {
+      if (ref.current && event.target instanceof Node && !ref.current.contains(event.target))
+        onOutside();
+    };
+    document.addEventListener('pointerdown', listener);
+    return () => document.removeEventListener('pointerdown', listener);
+  }, [ref, onOutside]);
+}
+export function usePagination(total: number, pageSize = 5) {
+  const [page, setPage] = useState(1);
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  const current = Math.min(page, pages);
+  return {
+    page: current,
+    pages,
+    setPage,
+    start: (current - 1) * pageSize,
+    end: current * pageSize,
+  };
+}
+export function useDisclosure(initial = false) {
+  const [isOpen, setOpen] = useState(initial);
+  return {
+    isOpen,
+    open: useCallback(() => setOpen(true), []),
+    close: useCallback(() => setOpen(false), []),
+    toggle: useCallback(() => setOpen((v) => !v), []),
+  };
+}

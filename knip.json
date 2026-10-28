@@ -1,0 +1,1 @@
+{ "entry": ["src/template-api.ts", "src/**/*.test.{ts,tsx}"], "project": ["src/**/*.{ts,tsx,css}"] }

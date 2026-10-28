@@ -1,0 +1,186 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@theme inline {
+  --spacing: var(--space);
+  --radius-lg: calc(var(--radius) * 0.6667);
+  --radius-xl: var(--radius);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --radius-card: var(--radius);
+}
+@layer base {
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font);
+    font-size: 14px;
+  }
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+  }
+  h2 {
+    font-size: 17px;
+    font-weight: 650;
+  }
+  h3 {
+    font-weight: 650;
+  }
+  p {
+    line-height: 1.7;
+  }
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+@layer components {
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-weight: 500;
+  }
+  .control {
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: calc(var(--radius) * 0.6667);
+    color: var(--foreground);
+    font-weight: 400;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 9px 15px;
+    border-radius: calc(var(--radius) * 0.6667);
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--foreground);
+    transition: background 0.15s;
+  }
+  .btn:hover {
+    background: var(--accent-soft);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--surface);
+    border-color: var(--accent);
+  }
+  .btn-danger {
+    background: var(--danger);
+    color: var(--surface);
+  }
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .muted {
+    color: var(--muted);
+  }
+  .overlay {
+    background: #080c22aa;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+  }
+  .dialog {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(92vw, 540px);
+    max-height: 90dvh;
+    overflow: auto;
+    z-index: 51;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: calc(var(--radius) * 1.3333);
+    padding: 28px;
+    box-shadow: 0 24px 80px #0003;
+  }
+  .menu {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 6px;
+    border-radius: calc(var(--radius) * 0.8333);
+    box-shadow: 0 10px 40px #0002;
+    z-index: 60;
+    min-width: 180px;
+  }
+  .menu-item {
+    padding: 9px 12px;
+    border-radius: calc(var(--radius) * 0.4167);
+    outline: none;
+    display: block;
+  }
+  .menu-item[data-highlighted] {
+    background: var(--accent-soft);
+  }
+}
+@media print {
+  aside,
+  header,
+  footer,
+  button,
+  .no-print {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  .card {
+    border: 0;
+    box-shadow: none;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

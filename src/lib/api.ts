@@ -1,0 +1,72 @@
+import { tokenStorage } from './token-storage';
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+    public details: unknown = null,
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+export interface RequestContext {
+  url: string;
+  init: RequestInit;
+}
+type RequestInterceptor = (context: RequestContext) => RequestContext | Promise<RequestContext>;
+type ResponseInterceptor = (response: Response) => Response | Promise<Response>;
+const requestInterceptors: RequestInterceptor[] = [];
+const responseInterceptors: ResponseInterceptor[] = [];
+export const api = {
+  interceptors: {
+    request: {
+      use: (fn: RequestInterceptor) => {
+        requestInterceptors.push(fn);
+        return () => {
+          const i = requestInterceptors.indexOf(fn);
+          if (i >= 0) requestInterceptors.splice(i, 1);
+        };
+      },
+    },
+    response: {
+      use: (fn: ResponseInterceptor) => {
+        responseInterceptors.push(fn);
+        return () => {
+          const i = responseInterceptors.indexOf(fn);
+          if (i >= 0) responseInterceptors.splice(i, 1);
+        };
+      },
+    },
+  },
+  async request<T>(path: string, init: RequestInit = {}): Promise<T> {
+    const headers = new Headers(init.headers);
+    headers.set('Accept', 'application/json');
+    if (init.body) headers.set('Content-Type', 'application/json');
+    const token = tokenStorage.get();
+    if (token && !token.startsWith('demo-only')) headers.set('Authorization', `Bearer ${token}`);
+    let context: RequestContext = {
+      url: `${(import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '')}/${path.replace(/^\//, '')}`,
+      init: { ...init, headers },
+    };
+    for (const intercept of requestInterceptors) context = await intercept(context);
+    try {
+      let response = await fetch(context.url, context.init);
+      for (const intercept of responseInterceptors) response = await intercept(response);
+      const data: unknown =
+        response.status === 204 ? undefined : await response.json().catch(() => null);
+      if (!response.ok)
+        throw new ApiError(
+          typeof data === 'object' && data !== null && 'message' in data
+            ? String(data.message)
+            : `Request failed (${response.status})`,
+          response.status,
+          data,
+        );
+      return data as T;
+    } catch (error) {
+      if (error instanceof ApiError) throw error;
+      if (error instanceof DOMException && error.name === 'AbortError') throw error;
+      throw new ApiError('Unable to reach the service. Please try again.', 0);
+    }
+  },
+};
